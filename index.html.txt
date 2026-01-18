@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CharBuy Global | Ecosistema de Importación</title>
+    
+    <meta name="description" content="Ecosistema avanzado de importación. Rastreo, divisas, chat y búsqueda unificada.">
+    <link rel="icon" type="image/png" href="icons/icon-512.png">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6497576203102213" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div id="noti-banner" onclick="_askNoti()">🔔 Activa alertas para ofertas de importación [Activar]</div>
+
+<div class="logo-header">
+    <div class="main-logo">
+        <div style="font-size: 16px; text-align: center;">
+            <span style="color:var(--p)">⚽ 🎵</span><br>
+            <span style="color:#3776ab; font-size:20px;"></span>
+        </div>
+    </div>
+    <h1 style="margin:0; font-size: 1.4rem; letter-spacing: 2px;">CHARBUY <span style="color:var(--p)">GLOBAL</span></h1>
+</div>
+
+<main>
+    <div class="full-width">
+        <button class="btn-flash" onclick="window.open('https://www.amazon.com/gp/goldbox', '_blank')">⚡ OFERTAS RELÁMPAGO DE HOY</button>
+        <div class="market-grid">
+            <button class="m-btn m-amz" onclick="window.open('https://www.amazon.com', '_blank')">AMAZON</button>
+            <button class="m-btn m-ali" onclick="window.open('https://www.alibaba.com', '_blank')">ALIBABA</button>
+            <button class="m-btn m-meli" onclick="window.open('https://www.mercadolibre.com', '_blank')">M. LIBRE</button>
+        </div>
+    </div>
+
+    <section class="card">
+        <h3 style="margin:0; color:var(--a); font-size: 0.7rem; text-transform: uppercase;">Divisas Real-Time (Clic p/ Ajuste)</h3>
+        <div style="display:flex; gap:8px;">
+            <div style="flex:1.2"><input type="number" id="_v" value="1"></div>
+            <div style="flex:1"><select id="_s"></select></div>
+        </div>
+        <div class="res-box" id="_r" title="Haz clic para ajustar la tasa manualmente">0.00</div>
+    </section>
+
+    <section class="card">
+        <h3 style="margin:0; color:var(--p); font-size: 0.7rem; text-transform: uppercase;">Calculadora Land Cost</h3>
+        <div style="display:flex; gap:8px;">
+            <input type="number" id="_lb" placeholder="Lbs" oninput="_calc()">
+            <input type="number" id="_pr" placeholder="Precio $" oninput="_calc()">
+        </div>
+        <div class="res-box" id="_total" style="font-size: 1.6rem;">$ 0.00</div>
+    </section>
+
+    <div class="ad-space full-width">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-6497576203102213"
+             data-ad-slot="auto"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+
+    <section class="card" style="border-top: 3px solid var(--g);">
+        <h3 style="margin:0; color:var(--g); font-size: 0.7rem; text-transform: uppercase;">Rastreador de Paquetes</h3>
+        <input type="text" id="_track" placeholder="Tracking ID...">
+        <button class="btn-p" style="background:var(--g); color:white;" onclick="_goTrack()">RASTREAR</button>
+    </section>
+
+    <section class="card">
+        <h3 style="margin:0; color:var(--p); font-size: 0.7rem; text-transform: uppercase;">Buscador Global</h3>
+        <input type="text" id="_q" placeholder="Buscar productos...">
+        <button class="btn-p" onclick="_sh()">COMPARAR PRECIOS</button>
+        <div id="trends-box" style="margin-top:10px; text-align:center;"></div>
+    </section>
+</main>
+
+<div id="chat-btn" onclick="_toggleChat()">💬</div>
+<div id="chat-window">
+    <div class="chat-header"><span>Soporte Interno</span> <span onclick="_toggleChat()" style="cursor:pointer">✕</span></div>
+    <div id="chat-msgs">Bienvenido a CharBuy Global. ¿En qué podemos ayudarte?</div>
+    <div class="chat-input-area">
+        <input type="text" id="chat-txt" placeholder="Mensaje...">
+        <button class="btn-p" style="padding:4px 10px; width:auto;" onclick="_sendMsg()">✈</button>
+    </div>
+</div>
+
+<footer>
+    <p>© 2026 CharBuy Global Ecosystem</p>
+</footer>
+
+<script>
+    let _rates = {};
+
+    function _toggleChat() {
+        const win = document.getElementById('chat-window');
+        win.style.display = (win.style.display === 'flex') ? 'none' : 'flex';
+    }
+    function _sendMsg() {
+        const txt = document.getElementById('chat-txt'); if(!txt.value) return;
+        const box = document.getElementById('chat-msgs');
+        box.innerHTML += `<div style="color:var(--p); margin-top:8px;">Usuario: ${txt.value}</div>`;
+        txt.value = "";
+        setTimeout(() => { box.innerHTML += `<div style="color:var(--a); margin-top:4px;">Soporte: Gracias por contactarnos. Un agente revisará tu solicitud.</div>`; }, 1000);
+    }
+
+    if (Notification.permission === 'default') document.getElementById('noti-banner').style.display = 'block';
+    function _askNoti() {
+        Notification.requestPermission().then(p => { if(p === 'granted') document.getElementById('noti-banner').style.display = 'none'; });
+    }
+
+    async function _load() {
+        try {
+            const r = await fetch('https://open.er-api.com/v6/latest/USD');
+            const d = await r.json(); 
+            _rates = d.rates;
+            const s = document.getElementById('_s');
+            s.innerHTML = "";
+            ["VES", "EUR", "COP", "MXN", "ARS", "CLP", "BRL", "PEN"].forEach(c => {
+                let o = document.createElement('option'); o.value = _rates[c]; o.text = c;
+                if(c === "VES") o.selected = true;
+                s.appendChild(o);
+            });
+            _clc();
+        } catch (e) { 
+            console.log("Error de conexión. Use ajuste manual.");
+            _rates = {"VES": 1};
+        }
+    }
+
+    function _clc() {
+        const v = document.getElementById('_v').value; 
+        const s = document.getElementById('_s');
+        const r = s.value;
+        document.getElementById('_r').innerText = (v * r).toLocaleString('es-VE', {minimumFractionDigits: 2});
+    }
+
+    document.getElementById('_r').addEventListener('click', () => {
+        let nuevoValor = prompt("Ingrese valor manual del dólar para esta moneda:", document.getElementById('_s').value);
+        if (nuevoValor && !isNaN(nuevoValor)) {
+            let s = document.getElementById('_s');
+            s.options[s.selectedIndex].value = nuevoValor;
+            _clc();
+        }
+    });
+
+    function _goTrack() {
+        const id = document.getElementById('_track').value;
+        if(id) window.open(`https://t.17track.net/es#nums=${id}`, '_blank');
+    }
+
+    function _calc() {
+        const lb = parseFloat(document.getElementById('_lb').value) || 0;
+        const pr = parseFloat(document.getElementById('_pr').value) || 0;
+        document.getElementById('_total').innerText = `$ ${(pr + (lb * 5) + (pr * 0.10)).toFixed(2)}`;
+    }
+
+    function _sh() {
+        const q = document.getElementById('_q').value; if(!q) return;
+        window.open(`https://www.amazon.com/s?k=${encodeURIComponent(q)}`, '_blank');
+        window.open(`https://www.alibaba.com/trade/search?SearchText=${encodeURIComponent(q)}`, '_blank');
+    }
+
+    const _db = [{t: "iPhone", e: "📱"}, {t: "Gaming", e: "🎮"}, {t: "Nike", e: "👟"}, {t: "Laptops", e: "💻"}];
+    document.getElementById('trends-box').innerHTML = _db.map(i => `<span class="trend-chip" onclick="document.getElementById('_q').value='${i.t}'; _sh();">${i.e} ${i.t}</span>`).join('');
+
+    document.getElementById('_v').addEventListener('input', _clc);
+    document.getElementById('_s').addEventListener('change', _clc);
+    _load();
+</script>
+</body>
+</html>
